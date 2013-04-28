@@ -8,6 +8,6 @@ README
 cpanfile
 dist.ini
 lib/App/cpangrep.pm
-scripts/cpangrep
+script/cpangrep
 t/basic.t
 t/release-pod-syntax.t
