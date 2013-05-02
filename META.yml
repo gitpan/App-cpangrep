@@ -32,6 +32,6 @@ resources:
   bugtracker: https://github.com/tsibley/App-cpangrep/issues
   homepage: https://github.com/tsibley/App-cpangrep
   repository: https://github.com/tsibley/App-cpangrep.git
-version: 0.02
+version: 0.03
 x_contributors:
   - 'Thomas Sibley <tsibley@cpan.org>'
