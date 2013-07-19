@@ -26,7 +26,7 @@
    "prereqs" : {
       "configure" : {
          "requires" : {
-            "Module::Build::Tiny" : "0.017"
+            "ExtUtils::MakeMaker" : "6.30"
          }
       },
       "develop" : {
@@ -37,8 +37,8 @@
       "runtime" : {
          "requires" : {
             "CPAN::DistnameInfo" : "0",
-            "HTTP::Tiny" : "0",
             "JSON" : "2.27",
+            "LWP::UserAgent" : "0",
             "Term::ANSIColor" : "0",
             "URI::Escape" : "0",
             "perl" : "5.008005"
@@ -62,9 +62,6 @@
          "web" : "https://github.com/tsibley/App-cpangrep"
       }
    },
-   "version" : "0.03",
-   "x_contributors" : [
-      "Thomas Sibley <tsibley@cpan.org>"
-   ]
+   "version" : "0.04"
 }
 
