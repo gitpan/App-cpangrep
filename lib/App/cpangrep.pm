@@ -6,13 +6,14 @@ use 5.008_005;
 use utf8;
 use open OUT => qw< :encoding(UTF-8) :std >;
 
-our $VERSION = '0.04';
+our $VERSION = '0.05';
 
 use Config;
 use URI::Escape qw(uri_escape);
 use LWP::UserAgent;
 use JSON qw(decode_json);
 use CPAN::DistnameInfo;
+use List::Util qw(sum);
 
 our $SERVER = "http://grep.cpan.me";
 our $COLOR;
@@ -129,10 +130,16 @@ sub search {
 sub display {
     my $search  = shift or return;
     my $results = $search->{results} || [];
-    printf "%d result%s.", $search->{count}, ($search->{count} != 1 ? "s" : "");
-    printf "  Showing first %d.\n", scalar @$results
-        if @$results;
-    print "\n";
+    printf "%d result%s in %d file%s.",
+        $search->{count}, ($search->{count} != 1 ? "s" : ""),
+        scalar @$results, (@$results        != 1 ? "s" : "");
+
+    my $display_total = sum map { scalar @{$_->{results}} }
+                            map { @{$_->{files}} }
+                                @$results;
+    printf "  Showing first %d results.", $display_total
+        if $display_total and $display_total != $search->{count};
+    print "\n\n";
 
     for my $result (@$results) {
         my $fulldist = $result->{dist};
