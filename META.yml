@@ -33,6 +33,6 @@ resources:
   bugtracker: https://github.com/tsibley/App-cpangrep/issues
   homepage: https://github.com/tsibley/App-cpangrep
   repository: https://github.com/tsibley/App-cpangrep.git
-version: 0.05
+version: 0.06
 x_contributors:
   - 'Thomas Sibley <trsibley@uw.edu>'
