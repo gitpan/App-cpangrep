@@ -6,7 +6,7 @@ use 5.008_005;
 use utf8;
 use open OUT => qw< :encoding(UTF-8) :std >;
 
-our $VERSION = '0.06';
+our $VERSION = '0.07';
 
 use Config;
 use URI::Escape qw(uri_escape);
@@ -34,12 +34,14 @@ sub run {
         'd|debug!'  => \$DEBUG,
         'h|help'    => \(my $help),
         'version'   => \(my $version),
+        'pager!'    => \(my $pager),
 
         'l'         => \(my $list),
         'server=s'  => \$SERVER,
     );
 
     setup_colors() unless defined $COLOR and not $COLOR;
+    setup_pager() unless defined $pager and not $pager;
 
     if ($help) {
         print help();
@@ -88,6 +90,7 @@ Multiple query arguments will be joined with spaces for convenience.
 
   --color       Enable colored output even if STDOUT isn't a terminal
   --no-color    Disable colored output
+  --no-pager    Disable output through a pager
 
   --server      Specifies an alternate server to use, for example:
                     --server http://localhost:5000
@@ -122,6 +125,7 @@ sub search {
     my $result = eval { decode_json($content) };
     if ($@ or not $result) {
         warn "Error decoding JSON response: $@\n";
+        debug($content);
         return;
     }
     return $result;
@@ -208,6 +212,30 @@ sub display_list {
             print join("/", $dist->cpanid, $dist->distvname, $file->{file}), "\n";
         }
     }
+}
+
+# Some tricks borrowed from uninames' fork_output()
+sub setup_pager {
+    return unless -t STDOUT;
+
+    my $pager = $ENV{PAGER} || 'less';
+
+    $ENV{LESS} = 'SRFX' . ($ENV{LESS} || '')
+        if $pager =~ /less/;
+    $ENV{LESSCHARSET} = "utf-8"
+        if $pager =~ /more|less/ and ($ENV{LESSCHARSET} || "") ne "utf-8";
+
+    open STDOUT, "| $pager"
+        or die "couldn't reopen stdout to pager '$pager': $!\n";
+
+    # exit cleanly on :q in less
+    $SIG{PIPE} = sub { exit };
+
+    # close piped output, otherwise we screw up terminal
+    END { close STDOUT or die "error closing stdout: $!\n" }
+
+    binmode STDOUT, ':encoding(UTF-8)';
+    $| = 1;
 }
 
 # Setup colored output if we have it
